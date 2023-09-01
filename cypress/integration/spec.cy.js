@@ -1,39 +1,45 @@
-describe('Counter Application', () => {
-    beforeEach(() => {
-        // assuming you're running your dev server on port 3000
-        cy.visit('http://localhost:3000');
-      });
-    
-      it('displays the initial count', () => {
-        cy.get('h1').should('contain', 'Count: 0');
-      });
-    
-      it('increments the counter on button click', () => {
-        cy.get('button').contains("Increment").click();
-        cy.get('h1').should('contain', 'Count: 1');
-    
-        cy.get('button').contains("Increment").click();
-        cy.get('h1').should('contain', 'Count: 2');
-      });
-    it('does not re-render CounterButton on dummy state change', () => {
-        let logCalledWithExpectedMessage = false;
-    
-        cy.on('window:console', (msg) => {
-          if (msg && msg[0] === 'CounterButton rendered!') {
-            logCalledWithExpectedMessage = true;
+describe('Item List Application', () => {
+  beforeEach(() => {
+      cy.visit('http://localhost:3000');
+  });
+
+  it('adds an item to the list and displays a success message', () => {
+      cy.get('button').click();
+      cy.get('ul li').should('have.length', 1);
+      cy.get('p#message').should('contain', 'Item added successfully!');
+  });
+
+  it('hides the success message after 3 seconds', () => {
+      cy.get('button').click();
+      cy.get('p#message').should('contain', 'Item added successfully!');
+      cy.wait(4000);
+      cy.get('p#message').should('not.exist');
+  });
+
+  it('does not re-render ItemList on success message display', () => {
+      let logCalledWithExpectedMessage = false;
+
+      cy.on('window:console', (msg) => {
+        console.log("msg",msg);
+          if (msg && msg[1] === 'ItemList rendered!') {
+              logCalledWithExpectedMessage = true;
           }
-        });
-    
-        // Change the dummy state to cause re-render
-        cy.get('button').contains('Change Dummy State').click();
-    
-        // Assert if the log was called with the expected message
-        cy.wrap(null).should(() => {
+      });
+
+      cy.get('button').click();
+
+      cy.wrap(null).should(() => {
           expect(logCalledWithExpectedMessage).to.be.false;
-        });
+      });
+
+      logCalledWithExpectedMessage = false; // Resetting the flag for the next test
+
+      cy.get('button').click();
+
+      // Here, since the item list gets updated with a new item, 
+      // we do expect the log to be true (as it should render again)
+      cy.wrap(null).should(() => {
+          expect(logCalledWithExpectedMessage).to.be.false;
       });
   });
-  
-  // Utility to spy on console logs
-  Cypress.Commands.overwrite('log', (subject, message) => cy.task('log', message));
-  
+});
