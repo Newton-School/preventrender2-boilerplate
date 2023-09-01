@@ -1,11 +1,19 @@
-"use client"
-import { useState, useMemo } from "react";
-import LoginComponent from '../components/LoginComponent';
+import { useState, useCallback } from 'react';
+import CounterButton from '../components/CounterButton';
+
 export default function Home() {
-  return (
-    <div>
-        <h1>Welcome to Next.js!</h1>
-        <LoginComponent />
-    </div>
-);
+    const [count, setCount] = useState(0);
+    const [dummyState, setDummyState] = useState(0); // New state for testing
+
+    const incrementCount = useCallback(() => {
+        setCount(prevCount => prevCount + 1);
+    }, []);
+
+    return (
+        <div>
+            <h1>Count: {count}</h1>
+            <CounterButton increment={incrementCount} /><br></br>
+            <button onClick={() => setDummyState(prev => prev + 1)}>Change Dummy State</button>
+        </div>
+    );
 }
