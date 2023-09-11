@@ -5,18 +5,11 @@ export default function Home() {
     const [items, setItems] = useState([]);
     const [message, setMessage] = useState('');
 
-    const addItem = useCallback(() => {
-        setItems(prevItems => [...prevItems, `Item ${prevItems.length + 1}`]);
-        setMessage('Item added successfully!');
-
-        setTimeout(() => {
-            setMessage('');
-        }, 3000);
-    }, []);
+    
 
     return (
         <div>
-            <button onClick={addItem}>Add Item</button>
+            <button >Add Item</button>
             <ItemList items={items} />
             {message && <p id='message'>{message}</p>}
         </div>
